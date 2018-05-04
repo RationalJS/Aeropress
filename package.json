@@ -14,7 +14,7 @@
   "devDependencies": {
     "bs-platform": "^3.0.0"
   },
-  "description": "Hello! This project allows you to quickly get started with Reason and BuckleScript. If you wanted a more sophisticated version, try the `react` template (`bsb -theme react -init .`).",
+  "description": "BuckleScript bindings for ospec.",
   "main": "index.js",
   "peerDependencies": {
     "ospec": "^1.4.1"
