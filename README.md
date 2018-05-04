@@ -32,6 +32,7 @@ describe("Example", () => {
 
   test("sync example", () => {
     f(x,y) |> equals("a correct value");
+    f(x,y) |> equals("a correct value", ~m="A descriptive failure message");
     g(x,y) |> deepEquals(["another", "correct", "value"]);
   });
 
@@ -79,10 +80,10 @@ Hooks:
 
 Assertions:
 
-- `equals(expected, actual)` - Expect a value to equal another value.
-- `deepEquals(expected, actual)` - Expect a value to **deep equal** another value.
-- `notEquals(expected, actual)`
-- `notDeepEquals(expected, actual)`
+- `equals(expected, ~m=?, actual)` - Expect a value to equal another value. Optionally pass in `~m="my msg"` to show a custom message if the assertion fails.
+- `deepEquals(expected, ~m=?, actual)` - Expect a value to **deep equal** another value.
+- `notEquals(expected, ~m=?, actual)`
+- `notDeepEquals(expected, ~m=?, actual)`
 
 ## Build
 ```

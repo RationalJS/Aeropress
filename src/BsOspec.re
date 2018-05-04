@@ -39,20 +39,42 @@ external beforeEachAsync : (('a => unit) => 'b) => unit = "beforeEach";
 [@bs.module "ospec"]
 external afterEachAsync : (('a => unit) => 'b) => unit = "afterEach";
 
-
+type desc_fn = [@bs] (string) => unit;
 type checker('a) = {
   .
-  "equals": [@bs.meth] ('a) => unit,
-  "deepEquals": [@bs.meth] ('a) => unit,
-  "notEquals": [@bs.meth] ('a) => unit,
-  "notDeepEquals": [@bs.meth] ('a) => unit,
+  "equals": [@bs.meth] ('a) => desc_fn,
+  "deepEquals": [@bs.meth] ('a) => desc_fn,
+  "notEquals": [@bs.meth] ('a) => desc_fn,
+  "notDeepEquals": [@bs.meth] ('a) => desc_fn,
 };
 
 [@bs.module]
 external o : ('a) => checker('b) = "ospec";
 
-let equals = (expected,actual) => o(actual)##equals(expected);
-let deepEquals = (expected,actual) => o(actual)##deepEquals(expected);
+let equals = (expected, ~m=?, actual) => switch(m) {
+  | Some(message) =>
+    let desc = o(actual)##equals(expected);
+    desc(. message)
+  | None => o(actual)##equals(expected) |> ignore
+};
 
-let notEquals = (expected,actual) => o(actual)##notEquals(expected);
-let notDeepEquals = (expected,actual) => o(actual)##notDeepEquals(expected);
+let deepEquals = (expected, ~m=?, actual) => switch(m) {
+  | Some(message) =>
+    let desc = o(actual)##deepEquals(expected);
+    desc(. message)
+  | None => o(actual)##deepEquals(expected) |> ignore
+};
+
+let notEquals = (expected, ~m=?, actual) => switch(m) {
+  | Some(message) =>
+    let desc = o(actual)##notEquals(expected);
+    desc(. message)
+  | None => o(actual)##notEquals(expected) |> ignore
+};
+
+let notDeepEquals = (expected, ~m=?, actual) => switch(m) {
+  | Some(message) =>
+    let desc = o(actual)##notDeepEquals(expected);
+    desc(. message)
+  | None => o(actual)##notDeepEquals(expected) |> ignore
+};
