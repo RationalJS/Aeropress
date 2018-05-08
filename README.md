@@ -26,7 +26,9 @@ First, make sure your tests are in a folder EXACTLY named `tests/` (this limitat
 Next, write your tests. Ospec uses a single function `o()` to do pretty much everything. However, OCaml doesn't support overloaded functions, so bs-ospec separates each use case into its own function (it all compiles to a single function in the end).
 
 ```js
-open BsOspec;
+open BsOspec.Cjs;
+/* OR: */
+/* open BsOspec.Esm; */
 
 describe("Example", () => {
 
