@@ -1,13 +1,13 @@
 {
   "name": "bs-ospec",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "scripts": {
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world"
   },
   "keywords": [
-    "BuckleScript"
+    "BuckleScript", "ReasonML", "testing", "binding"
   ],
   "author": "Gilbert",
   "license": "MIT",
