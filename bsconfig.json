@@ -17,7 +17,7 @@
   },
   "suffix": ".bs.js",
   "bs-dependencies": [
-    "bs-node", "rational-future"
+    "bs-node", "reason-future"
   ],
   "bs-dev-dependencies": [
     "bs-ospec"

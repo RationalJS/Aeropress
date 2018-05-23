@@ -38,7 +38,7 @@ describe("AeroRequest", () => {
 
     AeroRequest.get("http://localhost:" ++ string_of_int(port) ++ "/hello")
     |> AeroRequest.run
-    |> Future.get(result => switch(result) {
+    |. Future.get(result => switch(result) {
         | Ok(body) =>
           body |> equals({json|{"hi":"there"}|json});
           done_()
@@ -57,7 +57,7 @@ describe("AeroRequest", () => {
       |> bodyText(payload)
       |> run
     )
-    |> Future.get(result => switch(result) {
+    |. Future.get(result => switch(result) {
         | Ok(body) =>
           body |> equals(payload);
           done_()
@@ -79,7 +79,7 @@ describe("AeroRequest", () => {
       |> bodyJson(payload)
       |> run
     )
-    |> Future.get(result => switch(result) {
+    |. Future.get(result => switch(result) {
         | Ok(body) =>
           body |> equals(expected);
           done_()

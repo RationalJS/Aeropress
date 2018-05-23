@@ -4,6 +4,10 @@
 module NodeExtStream: {
   type dataOut;
 
+  type streamType(_) =
+    | Buffer : streamType(BsNode.Node.Buffer.t)
+    | String : streamType(string);
+
   /*
    Ensure each class is structrually different.
    */
@@ -97,6 +101,18 @@ module NodeExtStream: {
       "";
     [@bs.send.pipe: Js.t(#readableStream)]
     external onEnd : ([@bs.as "end"] _, unit => unit) => 'a = "on";
+
+    [@bs.send.pipe: Js.t(#readableStream)]
+    external onData :
+      (
+        [@bs.ignore] streamType('a),
+        [@bs.as "data"] _,
+        'a => 'b
+      ) => Js.t(#readableStream) =
+      "on";
+
+    [@bs.send.pipe: Js.t(#readableStream)]
+    external onFinish : ([@bs.as "finish"] _, Js.Nullable.t(Js.Exn.t) => unit) => 'a = "on";
   };
 
   module WritableStream: {

@@ -20,13 +20,11 @@
     "bs-ospec": "^0.3.2",
     "bs-platform": "^3.0.0",
     "glob": "^7.1.2",
-    "less": "^3.0.4",
     "ospec": "^2.0.0"
   },
   "description": "ReasonML Node server framework",
   "main": "index.js",
   "peerDependencies": {
-    "less": "^3.0.4",
     "ospec": "^2.0.0"
   },
   "repository": {
@@ -42,6 +40,7 @@
     "cookie": "^0.3.1",
     "filed": "github:RationalJS/filed",
     "mock-http-server": "github:rationaljs/node-mock-http-server#9f6e8af",
-    "rational-future": "^0.1.0"
+    "pour-css": "^1.1.0",
+    "reason-future": "^2.0.0"
   }
 }

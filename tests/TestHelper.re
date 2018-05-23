@@ -13,7 +13,7 @@ let makeReq = (~headers=Js.Dict.empty(), method_, url) =>
 let rec getRes = (callback, p) =>
   switch (p) {
     | AeroRoutes.Async(future) =>
-      future |> Future.get(getRes(callback))
+      future |. Future.get(getRes(callback))
     | other => callback(other)
   }
 ;

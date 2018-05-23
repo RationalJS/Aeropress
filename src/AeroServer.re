@@ -101,7 +101,7 @@ let create = (routes) =>
           res |. WS.endStream
         /*| Async(SendHeaders) => TODO */
         | Async(future) =>
-          future |> Future.get(execute)
+          future |. Future.get(execute)
         | other =>
           res |. Res.writeHead(500, ~headers=renderHeaders(emptyHeaders()), ());
           Js.log("Invalid response: " ++ print_handler_action(other));

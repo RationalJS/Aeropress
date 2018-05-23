@@ -102,7 +102,7 @@ module Middleware = {
       ...r,
       res: ResWithHeadersSent(code, headers)
     })
-    |> Future.value
+    |. Future.value
     |> async /* Wrap in async so HttpServer.re can handle it */
   };
 
@@ -153,10 +153,10 @@ module Router = {
            * This is here so OCaml types the function correctly,
            * but it also allows middleware to directly use other middleware!
            */
-          | Async(future2) => Async(future2 |> Future.map(handle))
+          | Async(future2) => Async(future2 |. Future.map(handle))
         };
         future
-        |> Future.map(handle)
+        |. Future.map(handle)
         |> (future => Async(future))
     };
   let (&&&) = chain;
@@ -178,10 +178,10 @@ module Router = {
            * This is here so OCaml types the function correctly,
            * but it also allows middleware to directly use other middleware!
            */
-          | Async(future2) => Async(future2 |> Future.map(handle))
+          | Async(future2) => Async(future2 |. Future.map(handle))
         };
         future
-        |> Future.map(handle)
+        |. Future.map(handle)
         |> (future => Async(future))
     };
   let (|||) = find;
