@@ -1,5 +1,4 @@
 open BsOspec.Cjs;
-open AeroResult;
 module MockServer = BsNodeMockHttpServer;
 
 describe("AeroRequest", () => {
@@ -39,7 +38,7 @@ describe("AeroRequest", () => {
     AeroRequest.get("http://localhost:" ++ string_of_int(port) ++ "/hello")
     |> AeroRequest.run
     |. Future.get(result => switch(result) {
-        | Ok(body) =>
+        | Belt.Result.Ok(body) =>
           body |> equals({json|{"hi":"there"}|json});
           done_()
         | Error(err) =>
@@ -58,7 +57,7 @@ describe("AeroRequest", () => {
       |> run
     )
     |. Future.get(result => switch(result) {
-        | Ok(body) =>
+        | Belt.Result.Ok(body) =>
           body |> equals(payload);
           done_()
         | Error(err) =>
@@ -80,7 +79,7 @@ describe("AeroRequest", () => {
       |> run
     )
     |. Future.get(result => switch(result) {
-        | Ok(body) =>
+        | Belt.Result.Ok(body) =>
           body |> equals(expected);
           done_()
         | Error(err) =>

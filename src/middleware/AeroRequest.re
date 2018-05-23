@@ -60,7 +60,7 @@ let go = (resolve) => (res) => {
       body := body^ ++ NodeExtStreamCast.unsafeDataOutputToString(chunk);
     }))
   |> Stream.onEnd(() => {
-      resolve(AeroResult.Ok(body^))
+      resolve(Belt.Result.Ok(body^))
     })
 };
 

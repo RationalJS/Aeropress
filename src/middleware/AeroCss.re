@@ -18,10 +18,10 @@ let bufferStreamtoFuture = (stream) => Future.make(resolve => {
     data := Buffer.concat([|data^, buf|])
   })
   |> Stream.ReadableStream.onFinish(e => switch(e |> Js.Nullable.toOption) {
-    | Some(error) => resolve @@ Js.Result.Error(
+    | Some(error) => resolve @@ Belt.Result.Error(
         error |. Js.Exn.message |. Option.getWithDefault("unknown error")
       )
-    | None => resolve @@ Js.Result.Ok(data^)
+    | None => resolve @@ Belt.Result.Ok(data^)
   })
 });
 
@@ -29,13 +29,9 @@ let isCssFile = (path) => Js.Re.test(path, [%re "/\\.(css)$/"]);
 
 type cache =
   | Cold
-  | Loading(Future.t( Js.Result.t(string,string) ))
+  | Loading(Future.t( Belt.Result.t(string,string) ))
   | Warm(string);
 
-let mapFutureResult = (f, future) => future |. Future.map(r => switch(r) {
-  | Js.Result.Ok(v) => f(v)
-  | Error(a) => Js.Result.Error(a)
-});
 
 let file = (~debug=?, ~includePaths=?, filePath) => {
   if ( ! Node.Fs.existsSync(filePath) ) {
@@ -54,7 +50,7 @@ let file = (~debug=?, ~includePaths=?, filePath) => {
   /* Return the middleware */
   (r) => {
     let send = (result) => switch (result) {
-      | Js.Result.Ok(css) =>
+      | Belt.Result.Ok(css) =>
         r
         |> setHeader("content-type", "text/css")
         |> status(200)
@@ -64,13 +60,13 @@ let file = (~debug=?, ~includePaths=?, filePath) => {
     };
 
     switch (cache^) {
-      | Warm(css) => send(Js.Result.Ok(css))
+      | Warm(css) => send(Belt.Result.Ok(css))
       | Loading(futureCss) => futureCss |. Future.map(send) |> async
       | Cold =>
         let futureCss = bundle(filePath)
         |. bufferStreamtoFuture
-        |. FutureResult.mapOk(buf => Js.Result.Ok(buf |> Buffer.toStringWithEncoding(_,"utf8")))
-        |. FutureResult.tapOk(css => if (AeroConfig.prod) {
+        |. Future.mapOk(buf => buf |. Buffer.toStringWithEncoding("utf8"))
+        |. Future.tapOk(css => if (AeroConfig.prod) {
           cache := Warm(css)
         });
 
