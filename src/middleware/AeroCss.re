@@ -33,12 +33,10 @@ type cache =
   | Warm(string);
 
 
-let file = (~debug=?, ~includePaths=?, filePath) => {
+let file = (filePath) => {
   if ( ! Node.Fs.existsSync(filePath) ) {
     raise(AeroCssError("[AeroLess] File does not exist: " ++ filePath))
   };
-
-  /*let debug' = Option.getWithDefault(debug, AeroConfig.dev);*/
 
   /* Will eventually need & implement this */
   /*let includePaths' = Option.getWithDefault(includePaths, [filePath])
@@ -65,13 +63,16 @@ let file = (~debug=?, ~includePaths=?, filePath) => {
       | Cold =>
         let futureCss = bundle(filePath)
         |. bufferStreamtoFuture
-        |. Future.mapOk(buf => buf |. Buffer.toStringWithEncoding("utf8"))
-        |. Future.tapOk(css => if (AeroConfig.prod) {
-          cache := Warm(css)
-        });
+        |. Future.mapOk(buf => buf |. Buffer.toStringWithEncoding("utf8"));
 
         cache := Loading(futureCss);
-        futureCss |. Future.map(send) |. async
+
+        futureCss
+        |. Future.tapOk(css => if (AeroConfig.prod) {
+            cache := Warm(css)
+          })
+        |. Future.map(send)
+        |. async
     }
   }
 };
