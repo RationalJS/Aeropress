@@ -41,6 +41,6 @@
     "filed": "github:RationalJS/filed",
     "mock-http-server": "github:rationaljs/node-mock-http-server#9f6e8af",
     "pour-css": "^1.1.0",
-    "reason-future": "^2.1.1"
+    "reason-future": "^2.2.1"
   }
 }
