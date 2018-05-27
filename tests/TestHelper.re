@@ -18,6 +18,16 @@ let rec getRes = (callback, p) =>
   }
 ;
 
+let expectStatus = (expected, r) => {
+  switch(r) {
+    | Halt({ res: ResEnded(_,status,_,_) }) =>
+      status |> equals(expected)
+    | _ =>
+      raise(AssertionError("Response did not end"))
+  };
+  r
+};
+
 let expectJson = (expected, actual) => switch(actual) {
   | Halt({ res: ResEnded(_,_,_,body) }) => switch(body) {
       | Some(body) =>

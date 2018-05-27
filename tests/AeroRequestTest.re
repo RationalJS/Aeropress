@@ -35,11 +35,13 @@ describe("AeroRequest", () => {
         }
       }) |> ignore;
 
-    AeroRequest.get("http://localhost:" ++ string_of_int(port) ++ "/hello")
-    |> AeroRequest.run
+    AeroRequest.(
+      get("http://localhost:" ++ string_of_int(port) ++ "/hello")
+      |> run
+    )
     |. Future.get(result => switch(result) {
-        | Belt.Result.Ok(body) =>
-          body |> equals({json|{"hi":"there"}|json});
+        | Belt.Result.Ok(res) =>
+          res.body |> equals({json|{"hi":"there"}|json});
           done_()
         | Error(err) =>
           Js.log(err);
@@ -57,8 +59,8 @@ describe("AeroRequest", () => {
       |> run
     )
     |. Future.get(result => switch(result) {
-        | Belt.Result.Ok(body) =>
-          body |> equals(payload);
+        | Belt.Result.Ok(res) =>
+          res.body |> equals(payload);
           done_()
         | Error(err) =>
           Js.log(err);
@@ -79,8 +81,8 @@ describe("AeroRequest", () => {
       |> run
     )
     |. Future.get(result => switch(result) {
-        | Belt.Result.Ok(body) =>
-          body |> equals(expected);
+        | Belt.Result.Ok(res) =>
+          res.body |> equals(expected);
           done_()
         | Error(err) =>
           Js.log(err);

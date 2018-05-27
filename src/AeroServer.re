@@ -75,9 +75,17 @@ let renderHeaders = (headers) => {
 let create = (routes) =>
   NodeExtHttp.createServer( (req, res) => {
     Js.log(Req.getMethod(req) ++ " " ++ Req.getUrl(req));
-    let plan =
+    let plan = try(
       (routes(makeRouteContext(req))
-        : Routes.handler_action(Routes.endpoint, Js.t({.}), Routes.fresh, Routes.completed) );
+        : Routes.handler_action(Routes.endpoint, Js.t({.}), Routes.fresh, Routes.completed) )
+    ) {
+      | Js.Exn.Error(e) =>
+        makeRouteContext(req)
+        |> Routes.Middleware.status(500)
+        |> Routes.Middleware.send(AeroConfig.prod
+          ? Some("Interval Server Error")
+          : e |. Js.Exn.message)
+    };
     let rec execute = Routes.((p) =>
       switch (p) {
         | Halt({ res: ResEnded(headersSent, status_code, headers, body) }) =>
@@ -112,5 +120,9 @@ let create = (routes) =>
     execute(plan)
   });
 
-let listen = (port, host, callback, server) =>
-  server |. NodeExtHttp.NodeExtNet.Server.listenTCP(~port, ~host, ~callback, ())
+let listen = (port, host, callback, server) => {
+  server |. NodeExtHttp.NodeExtNet.Server.listenTCP(~port, ~host, ~callback, ());
+  server
+};
+
+let close = NodeExtHttp.NodeExtNet.Server.close;

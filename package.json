@@ -18,15 +18,13 @@
   "license": "MIT",
   "devDependencies": {
     "bs-ospec": "^0.3.2",
-    "bs-platform": "^3.1.0",
+    "bs-platform": "^3.1.4",
     "glob": "^7.1.2",
+    "mock-http-server": "github:rationaljs/node-mock-http-server#9f6e8af",
     "ospec": "^2.0.0"
   },
   "description": "ReasonML Node server framework",
   "main": "index.js",
-  "peerDependencies": {
-    "ospec": "^2.0.0"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RationalJS/aeropress.git"
@@ -37,10 +35,11 @@
   "homepage": "https://github.com/RationalJS/aeropress#readme",
   "dependencies": {
     "bs-node": "github:reasonml-community/bs-node",
-    "cookie": "^0.3.1",
     "filed": "github:RationalJS/filed",
-    "mock-http-server": "github:rationaljs/node-mock-http-server#9f6e8af",
-    "pour-css": "^1.1.0",
     "reason-future": "^2.2.1"
+  },
+  "optionalDependencies": {
+    "cookie": "^0.3.1",
+    "pour-css": "^1.1.0"
   }
 }

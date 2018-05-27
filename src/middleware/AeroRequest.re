@@ -1,4 +1,6 @@
 module Stream = NodeExtHttp.NodeExtStream.ReadableStream;
+module Option = Belt.Option;
+module Result = Belt.Result;
 exception RequestError(string);
 
 type bodyTypeParam =
@@ -21,6 +23,12 @@ type options = {
   timeout: option(int),
 };
 
+type response = {
+  status:int,
+  headers: Js.Dict.t(string),
+  body: string,
+};
+
 let make = (method_, url) => {
   url: url,
   method_: method_,
@@ -35,7 +43,7 @@ let put = make("PUT");
 let patch = make("PATCH");
 let delete = make("DELETE");
 
-let body = (contentType, content, opts) => {
+let body = (contentType, content, opts : options) => {
   opts.headers |> Js.Dict.set(_, "content-type", contentType);
   { ...opts, body: content }
 };
@@ -57,11 +65,13 @@ let go = (resolve) => (res) => {
   res
   |> Stream.setEncoding("utf8")
   |> Stream.on(`data(chunk => {
-      body := body^ ++ NodeExtStreamCast.unsafeDataOutputToString(chunk);
-    }))
+    body := body^ ++ NodeExtStreamCast.unsafeDataOutputToString(chunk);
+  }))
   |> Stream.onEnd(() => {
-      resolve(Belt.Result.Ok(body^))
-    })
+    let headers = res |. NodeExtHttp.IncomingMessage.getHeaders;
+    let status = res |. NodeExtHttp.IncomingMessage.getStatusCode;
+    { status, headers, body: body^ } |. Result.Ok |. resolve
+  })
 };
 
 let run = (opts) => {
