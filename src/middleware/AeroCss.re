@@ -73,6 +73,8 @@ let file = (filePath) => {
         futureCss
         |. Future.tapOk(css => if (AeroConfig.prod) {
             cache := Warm(css)
+          } else {
+            cache := Cold
           })
         |. Future.map(send)
         |. async
