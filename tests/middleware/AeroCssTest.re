@@ -12,7 +12,7 @@ describe("AeroCss", () => {
 
     makeReq("GET", "/assets/style.css")
     |> router
-    |> getRes(
+    |. getRes(
       expectBody(~headers={ "content-type": "text/css" }, "body { color: red; }\n;\n;")
       >>% done_
     );

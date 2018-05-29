@@ -43,22 +43,22 @@ let put = make("PUT");
 let patch = make("PATCH");
 let delete = make("DELETE");
 
-let body = (contentType, content, opts : options) => {
+let body = (opts : options, contentType, content) => {
   opts.headers |> Js.Dict.set(_, "content-type", contentType);
   { ...opts, body: content }
 };
 
-let bodyJson = (content) => body("application/json", BodyString(content));
-let bodyUrlEncoded = (content, opts) => body("application/x-www-form-urlencoded", BodyString(content), opts);
-let bodyText = (content, opts) => body("text/plain", BodyString(content), opts);
+let bodyJson = (opts, content) => opts |. body("application/json", BodyString(content));
+let bodyUrlEncoded = (opts, content) => opts |. body("application/x-www-form-urlencoded", BodyString(content));
+let bodyText = (opts, content) => opts |. body("text/plain", BodyString(content));
 
-let header = (k, v, opts) => {
+let header = (opts, k, v) => {
   opts.headers |> Js.Dict.set(_, k, v);
   opts
 };
 
-let headers = (hs, opts) => { ...opts, headers: hs };
-let timeout = (ms, opts) => { ...opts, timeout: Some(ms) };
+let headers = (opts, hs) => { ...opts, headers: hs };
+let timeout = (opts, ms) => { ...opts, timeout: Some(ms) };
 
 let go = (resolve) => (res) => {
   let body = ref("");

@@ -17,11 +17,11 @@
   "author": "Gilbert",
   "license": "MIT",
   "devDependencies": {
-    "bs-ospec": "^0.3.2",
+    "bs-ospec": "^1.0.0",
     "bs-platform": "^3.1.4",
     "glob": "^7.1.2",
     "mock-http-server": "github:rationaljs/node-mock-http-server#9f6e8af",
-    "ospec": "^2.0.0"
+    "ospec": "^2.1.0"
   },
   "description": "ReasonML Node server framework",
   "main": "index.js",
@@ -40,6 +40,6 @@
   },
   "optionalDependencies": {
     "cookie": "^0.3.1",
-    "pour-css": "^1.1.0"
+    "pour-css": "^1.2.0"
   }
 }

@@ -13,18 +13,18 @@ let dir = (root) => (r) => {
   Js.log2("root",root);
   let file = r.req.url
   |> Str.sliceToEnd(~from=Str.length(r.urlMatched))
-  |> Path.join2(root);
+  |. Path.join2(root);
 
   if (Str.startsWith(root, file)) {
     Js.log2("> Serving", file);
-    r |> sendStream(filed(file))
+    r |. sendStream(filed(file))
   }
   else {
     Js.log2("> No such file:", file);
     /* Prevent directory traversal attack */
-    r |> status(404) |> sendText("Not found")
+    r |. status(404) |. sendText("Not found")
   }
 };
 
 let file = (path) => (r) =>
-  r |> sendStream(filed(path));
+  r |. sendStream(filed(path));

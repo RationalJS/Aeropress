@@ -7,10 +7,10 @@ describe("AeroRequest", () => {
   let server = MockServer.make(port);
 
   beforeEachAsync(done_ => {
-    server |> MockServer.start(done_)
+    server |. MockServer.start(done_)
   });
   afterEachAsync(done_ => {
-    server |> MockServer.stop(done_)
+    server |. MockServer.stop(done_)
   });
 
   let echo = (bodyFn) => {
@@ -25,7 +25,7 @@ describe("AeroRequest", () => {
 
   testAsync("get", done_ => {
     server
-    |> MockServer.on({
+    |. MockServer.on({
         "method": "GET",
         "path": "/hello",
         "reply": {
@@ -33,15 +33,15 @@ describe("AeroRequest", () => {
           "headers": { "content-type": "application/json" },
           "body": TestHelper.stringify({ "hi": "there" })
         }
-      }) |> ignore;
+      }) |. ignore;
 
     AeroRequest.(
       get("http://localhost:" ++ string_of_int(port) ++ "/hello")
-      |> run
+      |. run
     )
     |. Future.get(result => switch(result) {
         | Belt.Result.Ok(res) =>
-          res.body |> equals({json|{"hi":"there"}|json});
+          res.body |. equals({json|{"hi":"there"}|json});
           done_()
         | Error(err) =>
           Js.log(err);
@@ -50,17 +50,17 @@ describe("AeroRequest", () => {
   });
 
   testAsync("post string", done_ => {
-    server |> MockServer.on(echo([%raw "(req) => req.body"])) |> ignore;
+    server |. MockServer.on(echo([%raw "(req) => req.body"])) |. ignore;
 
     let payload = "hello?";
     AeroRequest.(
       post("http://localhost:" ++ string_of_int(port) ++ "/echo")
-      |> bodyText(payload)
-      |> run
+      |. bodyText(payload)
+      |. run
     )
     |. Future.get(result => switch(result) {
         | Belt.Result.Ok(res) =>
-          res.body |> equals(payload);
+          res.body |. equals(payload);
           done_()
         | Error(err) =>
           Js.log(err);
@@ -69,20 +69,20 @@ describe("AeroRequest", () => {
   });
 
   testAsync("post json", done_ => {
-    server |> MockServer.on(echo([%raw "(req) => JSON.stringify(req.body)"])) |> ignore;
+    server |. MockServer.on(echo([%raw "(req) => JSON.stringify(req.body)"])) |. ignore;
 
     /* Use wierdly formatted body to ensure server is parsing json per our header */
     let payload = "{  \"x\": 10,  \"y\":  [20, 30]}";
-    let expected = Js.Json.stringifyAny({ "x": 10, "y": [|20,30|] }) |> Belt.Option.getExn;
+    let expected = Js.Json.stringifyAny({ "x": 10, "y": [|20,30|] }) |. Belt.Option.getExn;
 
     AeroRequest.(
       post("http://localhost:" ++ string_of_int(port) ++ "/echo")
-      |> bodyJson(payload)
-      |> run
+      |. bodyJson(payload)
+      |. run
     )
     |. Future.get(result => switch(result) {
         | Belt.Result.Ok(res) =>
-          res.body |> equals(expected);
+          res.body |. equals(expected);
           done_()
         | Error(err) =>
           Js.log(err);

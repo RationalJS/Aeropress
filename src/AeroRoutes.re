@@ -67,7 +67,7 @@ module Middleware = {
 
   let async = (future) => Async(future);
 
-  let status = (code, r) => {
+  let status = (r, code) => {
     let ResFresh(headers) = r.res;
     {
       ...r,
@@ -75,7 +75,7 @@ module Middleware = {
     }
   };
 
-  let setHeader = (key, value, r) => {
+  let setHeader = (r, key, value) => {
     let set = h => Belt.Map.String.set(h,key,value);
     {
       ...r,
@@ -85,7 +85,7 @@ module Middleware = {
     }
   };
 
-  let getHeader = (type state, key, r : route_context('a,state)) => {
+  let getHeader = (type state, r : route_context('a,state), key) => {
     let get = h => Belt.Map.String.get(h,key);
     switch(r.res) {
       | ResFresh(headers) => get(headers)
@@ -106,7 +106,7 @@ module Middleware = {
     |> async /* Wrap in async so HttpServer.re can handle it */
   };
 
-  let send = (body, r) => {
+  let send = (r, body) => {
     let ResWithStatus(code, headers) = r.res;
     Halt({
       ...r,
@@ -115,15 +115,15 @@ module Middleware = {
     })
   };
 
-  let sendText = (text, r) => send(Some(text), r);
+  let sendText = (r, text) => r |. send(Some(text));
 
-  let sendJson = (content, r) =>
-    r |> send(content |> Js.Json.stringifyAny);
+  let sendJson = (r, content) =>
+    r |. send(content |. Js.Json.stringifyAny);
 
-  let sendJson' = (code, content, r) =>
-    r |> status(code) |> sendJson(content);
+  let sendJson' = (r, code, content) =>
+    r |. status(code) |. sendJson(content);
 
-  let sendStream = (stream, r) => {
+  let sendStream = (r, stream) => {
     let ResFresh(_) = r.res;
     Halt({
       ...r,
@@ -223,5 +223,5 @@ module Router = {
     };
   };
 
-  let literal = (content) => Middleware.sendJson'(200, content);
+  let literal = (content, r) => r |. Middleware.sendJson'(200, content);
 };

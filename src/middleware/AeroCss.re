@@ -17,7 +17,7 @@ let bufferStreamtoFuture = (stream) => Future.make(resolve => {
   |> Stream.ReadableStream.onData(Stream.Buffer, buf => {
     data := Buffer.concat([|data^, buf|])
   })
-  |> Stream.ReadableStream.onFinish(e => switch(e |> Js.Nullable.toOption) {
+  |> Stream.ReadableStream.onFinish(e => switch(e |. Js.Nullable.toOption) {
     | Some(error) => resolve @@ Belt.Result.Error(
         error |. Js.Exn.message |. Option.getWithDefault("unknown error")
       )
@@ -35,7 +35,10 @@ type cache =
 
 let file = (filePath) => {
   if ( ! Node.Fs.existsSync(filePath) ) {
-    raise(AeroCssError("[AeroLess] File does not exist: " ++ filePath))
+    raise(AeroCssError(
+      "[AeroCss] Entry file does not exist:\n  " ++ filePath ++
+      "\nPlease fix your path and restart your server."
+    ))
   };
 
   /* Will eventually need & implement this */
@@ -50,16 +53,16 @@ let file = (filePath) => {
     let send = (result) => switch (result) {
       | Belt.Result.Ok(css) =>
         r
-        |> setHeader("content-type", "text/css")
-        |> status(200)
-        |> sendText(css);
+        |. setHeader("content-type", "text/css")
+        |. status(200)
+        |. sendText(css);
       | Error(message) =>
-        r |> status(500) |> sendText(message)
+        r |. status(500) |. sendText(message)
     };
 
     switch (cache^) {
       | Warm(css) => send(Belt.Result.Ok(css))
-      | Loading(futureCss) => futureCss |. Future.map(send) |> async
+      | Loading(futureCss) => futureCss |. Future.map(send) |. async
       | Cold =>
         let futureCss = bundle(filePath)
         |. bufferStreamtoFuture

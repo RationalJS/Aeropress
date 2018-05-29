@@ -11,8 +11,8 @@ describe("Basic route matching", () => {
     let router = route &&& get("/hello") &&& literal("hi");
 
     makeReq("GET", "/hello")
-    |> router
-    |> getRes( expectJson("hi") );
+    |. router
+    |. getRes( expectJson("hi") );
   });
 
   test("multiple routes", () => {
@@ -21,12 +21,12 @@ describe("Basic route matching", () => {
       ||| get("/two") &&& literal(20);
 
     makeReq("GET", "/one")
-    |> router
-    |> getRes( expectJson(10) );
+    |. router
+    |. getRes( expectJson(10) );
 
     makeReq("GET", "/two")
-    |> router
-    |> getRes( expectJson(20) );
+    |. router
+    |. getRes( expectJson(20) );
   });
 
   testAsync("async route", done_ => {
@@ -36,22 +36,22 @@ describe("Basic route matching", () => {
     let router = route &&& get("/hello") &&& slowLiteral("hi");
 
     makeReq("GET", "/hello")
-    |> router
-    |> getRes( expectJson("hi") >>% done_ );
+    |. router
+    |. getRes( expectJson("hi") >>% done_ );
   });
 
   testAsync("double async route", done_ => {
     let pause = (r) => {
-      delay(50, () => next(r)) |> async;
+      delay(50, () => next(r)) |. async;
     };
     let slowLiteral = (x) => (r) =>
-      delay(50, () => r |> literal(x)) |> async;
+      delay(50, () => r |> literal(x)) |. async;
 
     let router = route &&& get("/goodbye") &&& pause &&& slowLiteral("bye");
 
     makeReq("GET", "/goodbye")
-    |> router
-    |> getRes( expectJson("bye") >>% done_ );
+    |. router
+    |. getRes( expectJson("bye") >>% done_ );
   });
 
   test("middleware adding to context", () => {
@@ -60,11 +60,11 @@ describe("Basic route matching", () => {
     let router = route
       &&& get("/")
       &&& yield_x
-      &&& (r => r |> sendJson'(200,r.ctx##x));
+      &&& (r => r |. sendJson'(200,r.ctx##x));
 
     makeReq("GET", "/")
-    |> router
-    |> getRes( expectJson(10) );
+    |. router
+    |. getRes( expectJson(10) );
   });
 
 });
@@ -79,12 +79,12 @@ describe("Route primitive composition", () => {
     ||| route &&& literal("not found");
 
     makeReq("GET", "/one/two")
-    |> router
-    |> getRes( expectJson("gp_1") );
+    |. router
+    |. getRes( expectJson("gp_1") );
 
     makeReq("GET", "/one")
-    |> router
-    |> getRes( expectJson("not found") );
+    |. router
+    |. getRes( expectJson("not found") );
   });
 
   test("get & prefix (2)", () => {
@@ -96,12 +96,12 @@ describe("Route primitive composition", () => {
     ||| route &&& literal("not found");
 
     makeReq("GET", "/one/two/three")
-    |> router
-    |> getRes( expectJson("gp_2") );
+    |. router
+    |. getRes( expectJson("gp_2") );
 
     makeReq("GET", "/one/two")
-    |> router
-    |> getRes( expectJson("not found") );
+    |. router
+    |. getRes( expectJson("not found") );
   });
 
   test("get, prefix, & param", () => {
@@ -109,15 +109,15 @@ describe("Route primitive composition", () => {
     &&& prefix("/users/")
     &&& param(paramValue => { "myId": int_of_string(paramValue) })
     &&& get("/test-route")
-    &&& (r => r |> sendJson'(200, { "id": r.ctx##myId }))
+    &&& (r => r |. sendJson'(200, { "id": r.ctx##myId }))
     ||| route &&& literal("not found");
 
     makeReq("GET", "/users/123/test-route")
-    |> router
-    |> getRes( expectJson({ "id": 123 }) );
+    |. router
+    |. getRes( expectJson({ "id": 123 }) );
 
     makeReq("GET", "/users/test-route")
-    |> router
-    |> getRes( expectJson("not found") );
+    |. router
+    |. getRes( expectJson("not found") );
   });
 });

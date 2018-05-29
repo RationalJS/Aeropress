@@ -14,11 +14,11 @@ let make = (~host="localhost", port : int) =>
   _make({ "host": host, "port": port });
 
 
-[@bs.send.pipe: server]
-external start : ('a => 'b) => unit = "";
-[@bs.send.pipe: server]
-external stop : ('a => 'b) => unit = "";
+[@bs.send]
+external start : (server, 'a => 'b) => unit = "";
+[@bs.send]
+external stop : (server, 'a => 'b) => unit = "";
 
 
-[@bs.send.pipe: server]
-external on : (Js.t({..})) => server = "";
+[@bs.send]
+external on : (server, Js.t({..})) => server = "";

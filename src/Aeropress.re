@@ -1,5 +1,5 @@
 module Cookie = AeroCookie;
-module Less = AeroLess;
+module Css = AeroCss;
 module Static = AeroStatic;
 module Server = AeroServer;
 
