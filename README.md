@@ -32,7 +32,7 @@ let appRouter
 
   = route
 &&& get("/assets/style.css")
-&&& Less.file("../client/css/style.less" |> getPath)
+&&& Css.file("../client/css/index.css" |> getPath)
 
 ||| route
 &&& prefix("/assets")
@@ -46,7 +46,7 @@ let port = AeroConfig.env("PORT", "7272") |> int_of_string;
 let hostname = AeroConfig.env("HOST", "127.0.0.1");
 
 HttpServer.create(appRouter)
-|> HttpServer.listen(port, hostname, () => {
+|. HttpServer.listen(port, hostname, () => {
   Js.log2("Listening on port", port)
 });
 
