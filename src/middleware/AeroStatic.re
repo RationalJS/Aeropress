@@ -8,7 +8,7 @@ external filed : string => Js.t(#NodeExtHttp.NodeExtStream.duplexStream) = "file
 
 let log = (x,y) => { Js.log2(x,y); y };
 
-let dir = (root) => (r) => {
+let dir = (~fallthrough=false, root) => (r) => {
   Js.log4("Matched so far:", r.urlMatched, "|", r.req.url);
   Js.log2("root",root);
   let file = r.req.url
@@ -18,6 +18,9 @@ let dir = (root) => (r) => {
   if (Str.startsWith(root, file)) {
     Js.log2("> Serving", file);
     r |. sendStream(filed(file))
+  }
+  else if (fallthrough) {
+    next(r)
   }
   else {
     Js.log2("> No such file:", file);
