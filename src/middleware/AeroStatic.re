@@ -13,7 +13,7 @@ let dir = (root) => (r) => {
   Js.log2("root",root);
   let file = r.req.url
   |> Str.sliceToEnd(~from=Str.length(r.urlMatched))
-  |. Path.join2(root);
+  |. Path.join2(root, _);
 
   if (Str.startsWith(root, file)) {
     Js.log2("> Serving", file);
