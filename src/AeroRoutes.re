@@ -223,5 +223,10 @@ module Router = {
     };
   };
 
+  let alterUrl = (f) => (r) => Pass({
+    ...r,
+    req: {...r.req, url: f(r.req.url)}
+  })
+
   let literal = (content, r) => r |. Middleware.sendJson'(200, content);
 };

@@ -120,4 +120,21 @@ describe("Route primitive composition", () => {
     |. router
     |. getRes( expectJson("not found") );
   });
+
+  test("get, prefix, & alter", () => {
+    let router = route
+    &&& prefix("/about/")
+    &&& (get("me") ||| get("you"))
+    &&& alterUrl(url => url ++ ".html")
+    &&& (r => r |. sendJson'(200, { "page": r.req.url }))
+    ||| route &&& literal("not found");
+
+    makeReq("GET", "/about/me")
+    |. router
+    |. getRes( expectJson({ "page": "/about/me.html" }) );
+
+    makeReq("GET", "/about/you")
+    |. router
+    |. getRes( expectJson({ "page": "/about/you.html" }) );
+  })
 });
