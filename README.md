@@ -43,7 +43,7 @@ let appRouter
 
 
 let port = AeroConfig.env("PORT", "7272") |> int_of_string;
-let hostname = AeroConfig.env("HOST", "127.0.0.1");
+let hostname = AeroConfig.env("HOST", "0.0.0.0");
 
 HttpServer.create(appRouter)
 |. HttpServer.listen(port, hostname, () => {
